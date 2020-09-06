@@ -18,7 +18,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   @override
   Stream<ThemeState> mapEventToState(ThemeEvent event) async* {
     if (event is ThemeEvent) {
-      print(event.appTheme);
+      // print(event.appTheme);
       yield ThemeState(themeData: AppThemes.appThemeData[event.appTheme]);
     }
   }
