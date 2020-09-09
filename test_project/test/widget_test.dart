@@ -48,12 +48,6 @@ void main() {
         expect(nextBtn, findsOneWidget);
         spotifyBloc.close();
       });
-
-      // testWidgets('test next screen Button', (WidgetTester tester) async {
-      //   await tester.pumpWidget(MyApp());
-      //   var nextBtn = find.byKey(Key('NextScreenBtn'));
-      //   expect(nextBtn, findsOneWidget);
-      // });
     });
 
     group('Spotify Test', () {
