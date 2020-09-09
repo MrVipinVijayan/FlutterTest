@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:test_project/apis/error.dart';
 import 'package:test_project/models/album_details.dart';
-import 'package:test_project/models/album_response.dart';
 import 'package:test_project/models/albums_list.dart';
 import 'package:test_project/models/spotify_error.dart';
 import 'constants.dart';
