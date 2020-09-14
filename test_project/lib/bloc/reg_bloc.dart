@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:meta/meta.dart';
+import 'package:test_project/models/reg_model.dart';
 import 'package:test_project/utils/validator.dart';
 
 @immutable
@@ -14,14 +15,23 @@ class RegistrationLoading extends RegisterState {
   //
 }
 
-class RegistrationFirstNameValidation extends RegisterState {
-  final bool validated;
-  RegistrationFirstNameValidation(this.validated);
+class FirstNameSuccess extends RegisterState {
+  FirstNameSuccess();
 }
 
-class RegistrationLastNameValidation extends RegisterState {
-  final bool validated;
-  RegistrationLastNameValidation(this.validated);
+class FirstNameError extends RegisterState {
+  final errorMessage;
+  FirstNameError(this.errorMessage);
+}
+
+class LastNameError extends RegisterState {
+  final errorMessage;
+  LastNameError(this.errorMessage);
+}
+
+class RegistrationCompleted extends RegisterState {
+  final RegisterModel registerModel;
+  RegistrationCompleted(this.registerModel);
 }
 
 class RegistrationLoaded extends RegisterState {
@@ -36,29 +46,45 @@ class RegistrationError extends RegisterState {
 
 class RegisterBloc extends Bloc<RegisterEvents, RegisterState> {
   //
+  RegisterModel registerModel = RegisterModel();
+
   RegisterBloc() : super(RegisterInitialState());
 
   @override
   Stream<RegisterState> mapEventToState(RegisterEvents event) async* {
-    if (event is FirstNameValidation) {
-      bool validated = Validator.isFirstNameValid(event.firstName);
-      yield RegistrationFirstNameValidation(validated);
+    if (event is FirstNameValidationEvent) {
+      bool validated = Validator.isNameValid(event.firstName);
+      if (validated) {
+        registerModel.firstName = event.firstName;
+        yield FirstNameSuccess();
+        return;
+      }
+      yield FirstNameError("First Name Invalid");
     }
-    if (event is LastNameValidation) {
-      bool validated = Validator.isFirstNameValid(event.lastName);
-      yield RegistrationLastNameValidation(validated);
+    if (event is LastNameValidationEvent) {
+      bool validated = Validator.isNameValid(event.lastName);
+      if (validated) {
+        registerModel.lastName = event.lastName;
+        yield RegistrationCompleted(registerModel);
+        return;
+      }
+      yield LastNameError("Last Name Invalid");
     }
   }
 }
 
 abstract class RegisterEvents {}
 
-class FirstNameValidation extends RegisterEvents {
+class FirstNameValidationEvent extends RegisterEvents {
   String firstName;
-  FirstNameValidation(this.firstName);
+  FirstNameValidationEvent(this.firstName);
 }
 
-class LastNameValidation extends RegisterEvents {
+class LastNameValidationEvent extends RegisterEvents {
   String lastName;
-  LastNameValidation(this.lastName);
+  LastNameValidationEvent(this.lastName);
+}
+
+class RegistrationDoneEvent extends RegisterEvents {
+  //
 }

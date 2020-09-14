@@ -15,16 +15,13 @@ class RegHomeScreen extends StatefulWidget {
 class _RegHomeScreenState extends State<RegHomeScreen> {
   //
   int _screenId = 0;
+  String _errMessage;
   RegisterModel _registerModel;
-  String _firstName;
-  String _lastName;
 
   @override
   void initState() {
     super.initState();
     _registerModel = RegisterModel();
-    _registerModel.firstName = _firstName;
-    _registerModel.lastName = _lastName;
   }
 
   @override
@@ -37,71 +34,67 @@ class _RegHomeScreenState extends State<RegHomeScreen> {
         create: (context) => RegisterBloc(),
         child: BlocBuilder<RegisterBloc, RegisterState>(
           builder: (BuildContext context, RegisterState state) {
-            String message = '';
-            message = processRegistrationEvents(state, message);
-            return Container(
-                padding: EdgeInsets.all(30.0),
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Stack(
-                      children: [
-                        Visibility(
-                          visible: 0 == _screenId,
-                          child: FirstNameScreen(
-                            onSubmitted: (text) {
-                              _firstName = text;
-                              context
-                                  .bloc<RegisterBloc>()
-                                  .add(FirstNameValidation(text));
-                            },
-                          ),
-                        ),
-                        Visibility(
-                          visible: 1 == _screenId,
-                          child: LastNameScreen(
-                            onSubmitted: (text) {
-                              _lastName = text;
-                              context
-                                  .bloc<RegisterBloc>()
-                                  .add(LastNameValidation(text));
-                            },
-                          ),
-                        ),
-                        Visibility(
-                          visible: 2 == _screenId,
-                          child: RegSuccessScreen(),
-                        )
-                      ],
-                    ),
-                    ErrorTxt(text: message),
-                    SizedBox(width: 50),
-                  ],
-                ));
+            if (state is FirstNameSuccess) {
+              _screenId = 1;
+              _errMessage = null;
+            }
+            if (state is FirstNameError) {
+              _errMessage = state.errorMessage;
+            }
+            if (state is LastNameError) {
+              _errMessage = state.errorMessage;
+            }
+            if (state is RegistrationCompleted) {
+              _screenId = 2;
+              _registerModel = state.registerModel;
+              print('Registration Completed ${_registerModel.firstName}');
+            }
+            return regUI(context);
           },
         ),
       ),
     );
   }
 
-  String processRegistrationEvents(RegisterState state, String message) {
-    if (state is RegistrationFirstNameValidation) {
-      if (state.validated) {
-        _registerModel.firstName = _firstName;
-        _screenId = 1;
-        return '';
-      }
-      message = 'First name invalid';
-    }
-    if (state is RegistrationLastNameValidation) {
-      if (state.validated) {
-        _registerModel.lastName = _lastName;
-        _screenId = 2;
-        return '';
-      }
-      message = 'Last name invalid';
-    }
-    return message;
+  Widget regUI(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(30.0),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Stack(
+            children: [
+              Visibility(
+                visible: 0 == _screenId,
+                child: FirstNameScreen(
+                  onSubmitted: (text) {
+                    context
+                        .bloc<RegisterBloc>()
+                        .add(FirstNameValidationEvent(text));
+                  },
+                ),
+              ),
+              Visibility(
+                visible: 1 == _screenId,
+                child: LastNameScreen(
+                  onSubmitted: (text) {
+                    context
+                        .bloc<RegisterBloc>()
+                        .add(LastNameValidationEvent(text));
+                  },
+                ),
+              ),
+              Visibility(
+                visible: 2 == _screenId,
+                child: RegSuccessScreen(),
+              )
+            ],
+          ),
+          null != _errMessage ? ErrorTxt(text: _errMessage) : Container(),
+          SizedBox(width: 50),
+        ],
+      ),
+    );
   }
 }
