@@ -19,9 +19,7 @@ class FirstNameScreen extends StatelessWidget {
           ),
           FlatButton(
             onPressed: () {
-              context
-                  .bloc<RegisterBloc>()
-                  .add(FirstNameValidation(controller.text));
+              onSubmitted(controller.text);
             },
             child: Text('Next'),
           )

@@ -19,10 +19,7 @@ class LastNameScreen extends StatelessWidget {
           ),
           FlatButton(
             onPressed: () {
-              //onSubmitted(controller.text);
-              context
-                  .bloc<RegisterBloc>()
-                  .add(LastNameValidation(controller.text));
+              onSubmitted(controller.text);
             },
             child: Text('Done'),
           )
