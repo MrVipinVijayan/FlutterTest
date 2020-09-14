@@ -84,7 +84,7 @@ class _AlbumsScreenState extends State<AlbumsScreen> {
         RaisedButton(
           key: Key('NextScreenBtn'),
           onPressed: () {
-            ScreenUtils.openHomeScreen(context);
+            ScreenUtils.openRegistrationScreen(context);
           },
           child: Text(
             'Open Next Screen',
