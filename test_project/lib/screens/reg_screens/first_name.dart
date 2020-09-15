@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/bloc/reg_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FirstNameScreen extends StatelessWidget {
   //
   final Function onSubmitted;
   final TextEditingController controller = TextEditingController();
+  final String text;
 
-  FirstNameScreen({this.onSubmitted});
+  FirstNameScreen({this.onSubmitted, this.text});
 
   @override
   Widget build(BuildContext context) {
+    if (null != text) {
+      controller.text = text;
+    }
     return Container(
       child: Column(
         children: [

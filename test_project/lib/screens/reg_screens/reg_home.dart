@@ -68,6 +68,7 @@ class _RegHomeScreenState extends State<RegHomeScreen> {
               Visibility(
                 visible: 0 == _screenId,
                 child: FirstNameScreen(
+                  text: context.bloc<RegisterBloc>().registerModel.firstName,
                   onSubmitted: (text) {
                     context
                         .bloc<RegisterBloc>()
@@ -78,6 +79,7 @@ class _RegHomeScreenState extends State<RegHomeScreen> {
               Visibility(
                 visible: 1 == _screenId,
                 child: LastNameScreen(
+                  text: context.bloc<RegisterBloc>().registerModel.lastName,
                   onSubmitted: (text) {
                     context
                         .bloc<RegisterBloc>()
@@ -91,7 +93,9 @@ class _RegHomeScreenState extends State<RegHomeScreen> {
               )
             ],
           ),
-          null != _errMessage ? ErrorTxt(text: _errMessage) : Container(),
+          null != _errMessage && 2 != _screenId
+              ? ErrorTxt(text: _errMessage)
+              : Container(),
           SizedBox(width: 50),
         ],
       ),
