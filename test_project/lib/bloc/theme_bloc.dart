@@ -13,10 +13,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   //
   ThemeBloc()
       : super(
-          ThemeState(
-            themeData: AppThemes.appThemeData[AppTheme.lightTheme],
-          ),
-        );
+            ThemeState(themeData: AppThemes.appThemeData[AppTheme.lightTheme]));
 
   @override
   Stream<ThemeState> mapEventToState(ThemeEvent event) async* {

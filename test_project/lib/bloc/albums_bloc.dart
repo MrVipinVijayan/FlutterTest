@@ -1,13 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
 import 'dart:async';
 import 'package:meta/meta.dart';
 import 'package:test_project/apis/error.dart';
 import 'package:test_project/apis/services.dart';
 import 'package:test_project/models/albums_list.dart';
 import 'package:equatable/equatable.dart';
+import 'package:test_project/models/spotify_error.dart';
 
 @immutable
 abstract class SpotifyState extends Equatable {
@@ -36,6 +35,7 @@ class AlbumListError extends SpotifyState {
 class SpotifyBloc extends Bloc<SpotifyEvents, SpotifyState> {
   //
   final SpotifyRepo spotifyRepo;
+  AlbumsList albumsList;
 
   SpotifyBloc({this.spotifyRepo}) : super(AlbumsInitState());
 
@@ -45,7 +45,9 @@ class SpotifyBloc extends Bloc<SpotifyEvents, SpotifyState> {
       case SpotifyEvents.fetchAlbums:
         yield AlbumsLoading();
         try {
-          AlbumsList albumsList = await spotifyRepo.getAlbumsList();
+          if (null == albumsList) {
+            albumsList = await spotifyRepo.getAlbumsList();
+          }
           yield AlbumsLoaded(albumsList);
         } on SocketException {
           yield AlbumListError(
@@ -60,8 +62,9 @@ class SpotifyBloc extends Bloc<SpotifyEvents, SpotifyState> {
             error: InvalidFormatException('Parse Error'),
           );
         } on SpotifyException catch (e) {
+          SpotifyError spotifyError = e.error;
           yield AlbumListError(
-            error: UnknownException(e.error.message),
+            error: UnknownException(spotifyError.error.message),
           );
         } catch (e) {
           yield AlbumListError(

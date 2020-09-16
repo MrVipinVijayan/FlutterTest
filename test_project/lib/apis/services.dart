@@ -27,10 +27,9 @@ class SpotifyAlbumServices implements SpotifyRepo {
     Response response = await http.get(uri, headers: headers());
     try {
       AlbumsList albumsList = albumsListFromJson(response.body);
-      print(response.body);
       return albumsList;
     } catch (e) {
-      SpotifyError spotifyError = spotifyErrorFromJson(e.error);
+      SpotifyError spotifyError = spotifyErrorFromJson(response.body);
       throw SpotifyException(spotifyError);
     }
   }
